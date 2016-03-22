@@ -120,7 +120,7 @@ class FakeShutilModule(object):
     abspath_dst = self.filesystem.NormalizePath(
         self.filesystem.ResolvePath(dst))
     if abspath_src == abspath_dst:
-      raise shutil.Error('`%s` and `%s` are the same file' % (src, dst))
+      raise shutil.Error('`{0!s}` and `{1!s}` are the same file'.format(src, dst))
 
     if self.filesystem.Exists(dst):
       dst_file_object = self.filesystem.GetObject(dst)
@@ -181,7 +181,7 @@ class FakeShutilModule(object):
       raise OSError(e.errno, e.message)
     if not stat.S_ISDIR(directory.st_mode):
       raise OSError(errno.ENOTDIR,
-                    'Fake os module: %r not a directory' % src)
+                    'Fake os module: {0!r} not a directory'.format(src))
     for name in directory.contents:
       srcname = self.filesystem.JoinPaths(src, name)
       dstname = self.filesystem.JoinPaths(dst, name)

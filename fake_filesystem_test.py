@@ -335,7 +335,7 @@ class FakeFilesystemUnitTest(TestCase):
     self.assertRaises(
         IOError, self.filesystem.RemoveObject,
         self.filesystem.JoinPaths(
-            '%s' % self.fake_file.name,
+            '{0!s}'.format(self.fake_file.name),
             'file_does_not_matter_since_parent_not_a_directory'))
 
   def testExistsFileRemovedFromChild(self):
@@ -382,7 +382,7 @@ class FakeFilesystemUnitTest(TestCase):
     self.assertTrue(stat.S_IFDIR & new_dir.st_mode)
 
     # Create second directory to make sure first is OK.
-    path = '%s/quux' % path
+    path = '{0!s}/quux'.format(path)
     self.filesystem.CreateDirectory(path)
     new_dir = self.filesystem.GetObject(path)
     self.assertEqual(os.path.basename(path), new_dir.name)
@@ -399,7 +399,7 @@ class FakeFilesystemUnitTest(TestCase):
     self.filesystem.CreateFile(path, contents=contents)
     self.assertTrue(self.filesystem.Exists(path))
     self.assertFalse(self.filesystem.Exists(os.path.dirname(path)))
-    path = './%s' % path
+    path = './{0!s}'.format(path)
     self.assertTrue(self.filesystem.Exists(os.path.dirname(path)))
 
   def testCreateFileInRootDirectory(self):
@@ -519,7 +519,7 @@ class FakeOsModuleTest(TestCase):
         expected_regexp = re.compile(expected_regexp)
       self.assertTrue(
           expected_regexp.search(str(err)),
-          '"%s" does not match "%s"' % (expected_regexp.pattern, str(err)))
+          '"{0!s}" does not match "{1!s}"'.format(expected_regexp.pattern, str(err)))
     else:
       self.fail(expected_exception.__name__ + ' not raised')
 
@@ -574,7 +574,7 @@ class FakeOsModuleTest(TestCase):
     directory = 'xyzzy/plugh'
     files = ['foo', 'bar', 'baz']
     for f in files:
-      self.filesystem.CreateFile('%s/%s' % (directory, f))
+      self.filesystem.CreateFile('{0!s}/{1!s}'.format(directory, f))
     files.sort()
     self.assertEqual(files, self.os.listdir(directory))
 
@@ -582,7 +582,7 @@ class FakeOsModuleTest(TestCase):
     directory = 'xyzzy'
     files = ['foo', 'bar', 'baz']
     for f in files:
-      self.filesystem.CreateFile('%s/%s' % (directory, f))
+      self.filesystem.CreateFile('{0!s}/{1!s}'.format(directory, f))
     self.filesystem.CreateLink('symlink', 'xyzzy')
     files.sort()
     self.assertEqual(files, self.os.listdir('symlink'))
@@ -598,7 +598,7 @@ class FakeOsModuleTest(TestCase):
   def testListdirCurrent(self):
     files = ['foo', 'bar', 'baz']
     for f in files:
-      self.filesystem.CreateFile('%s' % f)
+      self.filesystem.CreateFile('{0!s}'.format(f))
     files.sort()
     self.assertEqual(files, self.os.listdir('.'))
 
@@ -704,7 +704,7 @@ class FakeOsModuleTest(TestCase):
 
   def testFstat(self):
     directory = 'xyzzy'
-    file_path = '%s/plugh' % directory
+    file_path = '{0!s}/plugh'.format(directory)
     self.filesystem.CreateFile(file_path, contents='ABCDE')
     fake_open = fake_filesystem.FakeFileOpen(self.filesystem)
     file_obj = fake_open(file_path)
@@ -715,7 +715,7 @@ class FakeOsModuleTest(TestCase):
 
   def testStat(self):
     directory = 'xyzzy'
-    file_path = '%s/plugh' % directory
+    file_path = '{0!s}/plugh'.format(directory)
     self.filesystem.CreateFile(file_path, contents='ABCDE')
     self.assertTrue(stat.S_IFDIR & self.os.stat(directory)[stat.ST_MODE])
     self.assertTrue(stat.S_IFREG & self.os.stat(file_path)[stat.ST_MODE])
@@ -728,8 +728,8 @@ class FakeOsModuleTest(TestCase):
     file_contents = 'frobozz'
     # Just make sure we didn't accidentally make our test data meaningless.
     self.assertNotEqual(len(base_name), len(file_contents))
-    file_path = '%s/%s' % (directory, base_name)
-    link_path = '%s/link' % directory
+    file_path = '{0!s}/{1!s}'.format(directory, base_name)
+    link_path = '{0!s}/link'.format(directory)
     self.filesystem.CreateFile(file_path, contents=file_contents)
     self.filesystem.CreateLink(link_path, base_name)
     self.assertEqual(len(file_contents), self.os.lstat(file_path)[stat.ST_SIZE])
@@ -778,7 +778,7 @@ class FakeOsModuleTest(TestCase):
 
   def testRemoveDir(self):
     directory = 'xyzzy'
-    dir_path = '/%s/plugh' % directory
+    dir_path = '/{0!s}/plugh'.format(directory)
     self.filesystem.CreateDirectory(dir_path)
     self.assertTrue(self.filesystem.Exists(dir_path))
     self.assertRaises(OSError, self.os.remove, dir_path)
@@ -790,7 +790,7 @@ class FakeOsModuleTest(TestCase):
 
   def testRemoveFile(self):
     directory = 'zzy'
-    file_path = '%s/plugh' % directory
+    file_path = '{0!s}/plugh'.format(directory)
     self.filesystem.CreateFile(file_path)
     self.assertTrue(self.filesystem.Exists(file_path))
     self.os.remove(file_path)
@@ -799,7 +799,7 @@ class FakeOsModuleTest(TestCase):
   def testRemoveFileNoDirectory(self):
     directory = 'zzy'
     file_name = 'plugh'
-    file_path = '%s/%s' % (directory, file_name)
+    file_path = '{0!s}/{1!s}'.format(directory, file_name)
     self.filesystem.CreateFile(file_path)
     self.assertTrue(self.filesystem.Exists(file_path))
     self.os.chdir(directory)
@@ -811,7 +811,7 @@ class FakeOsModuleTest(TestCase):
     directory = 'zzy'
     subdirectory = self.os.path.join(directory, directory)
     file_name = 'plugh'
-    file_path = '%s/%s' % (directory, file_name)
+    file_path = '{0!s}/{1!s}'.format(directory, file_name)
     file_path_relative = self.os.path.join('..', file_name)
     self.filesystem.CreateFile(file_path)
     self.assertTrue(self.filesystem.Exists(file_path))
@@ -852,8 +852,8 @@ class FakeOsModuleTest(TestCase):
   def testRenameToNonexistentFile(self):
     """Can rename a file to an unused name."""
     directory = 'xyzzy'
-    old_file_path = '%s/plugh_old' % directory
-    new_file_path = '%s/plugh_new' % directory
+    old_file_path = '{0!s}/plugh_old'.format(directory)
+    new_file_path = '{0!s}/plugh_new'.format(directory)
     self.filesystem.CreateFile(old_file_path, contents='test contents')
     self.assertTrue(self.filesystem.Exists(old_file_path))
     self.assertFalse(self.filesystem.Exists(new_file_path))
@@ -866,20 +866,20 @@ class FakeOsModuleTest(TestCase):
   def testRenameDirectory(self):
     """Can rename a directory to an unused name."""
     for old_path, new_path in [('wxyyw', 'xyzzy'), ('/abccb', 'cdeed')]:
-      self.filesystem.CreateFile('%s/plugh' % old_path, contents='test')
+      self.filesystem.CreateFile('{0!s}/plugh'.format(old_path), contents='test')
       self.assertTrue(self.filesystem.Exists(old_path))
       self.assertFalse(self.filesystem.Exists(new_path))
       self.os.rename(old_path, new_path)
       self.assertFalse(self.filesystem.Exists(old_path))
       self.assertTrue(self.filesystem.Exists(new_path))
       self.assertEqual(
-          'test', self.filesystem.GetObject('%s/plugh' % new_path).contents)
+          'test', self.filesystem.GetObject('{0!s}/plugh'.format(new_path)).contents)
 
   def testRenameToExistentFile(self):
     """Can rename a file to a used name."""
     directory = 'xyzzy'
-    old_file_path = '%s/plugh_old' % directory
-    new_file_path = '%s/plugh_new' % directory
+    old_file_path = '{0!s}/plugh_old'.format(directory)
+    new_file_path = '{0!s}/plugh_new'.format(directory)
     self.filesystem.CreateFile(old_file_path, contents='test contents 1')
     self.filesystem.CreateFile(new_file_path, contents='test contents 2')
     self.assertTrue(self.filesystem.Exists(old_file_path))
@@ -893,8 +893,8 @@ class FakeOsModuleTest(TestCase):
   def testRenameToNonexistentDir(self):
     """Can rename a file to a name in a nonexistent dir."""
     directory = 'xyzzy'
-    old_file_path = '%s/plugh_old' % directory
-    new_file_path = '%s/no_such_path/plugh_new' % directory
+    old_file_path = '{0!s}/plugh_old'.format(directory)
+    new_file_path = '{0!s}/no_such_path/plugh_new'.format(directory)
     self.filesystem.CreateFile(old_file_path, contents='test contents')
     self.assertTrue(self.filesystem.Exists(old_file_path))
     self.assertFalse(self.filesystem.Exists(new_file_path))
@@ -914,22 +914,22 @@ class FakeOsModuleTest(TestCase):
   def testRenameEmptyDir(self):
     """Test a rename of an empty directory."""
     directory = 'xyzzy'
-    before_dir = '%s/empty' % directory
-    after_dir = '%s/unused' % directory
+    before_dir = '{0!s}/empty'.format(directory)
+    after_dir = '{0!s}/unused'.format(directory)
     self.filesystem.CreateDirectory(before_dir)
-    self.assertTrue(self.filesystem.Exists('%s/.' % before_dir))
+    self.assertTrue(self.filesystem.Exists('{0!s}/.'.format(before_dir)))
     self.assertFalse(self.filesystem.Exists(after_dir))
     self.os.rename(before_dir, after_dir)
     self.assertFalse(self.filesystem.Exists(before_dir))
-    self.assertTrue(self.filesystem.Exists('%s/.' % after_dir))
+    self.assertTrue(self.filesystem.Exists('{0!s}/.'.format(after_dir)))
 
   def testRenameDir(self):
     """Test a rename of a directory."""
     directory = 'xyzzy'
-    before_dir = '%s/before' % directory
-    before_file = '%s/before/file' % directory
-    after_dir = '%s/after' % directory
-    after_file = '%s/after/file' % directory
+    before_dir = '{0!s}/before'.format(directory)
+    before_file = '{0!s}/before/file'.format(directory)
+    after_dir = '{0!s}/after'.format(directory)
+    after_file = '{0!s}/after/file'.format(directory)
     self.filesystem.CreateDirectory(before_dir)
     self.filesystem.CreateFile(before_file, contents='payload')
     self.assertTrue(self.filesystem.Exists(before_dir))
@@ -947,8 +947,8 @@ class FakeOsModuleTest(TestCase):
   def testRenamePreservesStat(self):
     """Test if rename preserves mtime."""
     directory = 'xyzzy'
-    old_file_path = '%s/plugh_old' % directory
-    new_file_path = '%s/plugh_new' % directory
+    old_file_path = '{0!s}/plugh_old'.format(directory)
+    new_file_path = '{0!s}/plugh_new'.format(directory)
     old_file = self.filesystem.CreateFile(old_file_path)
     old_file.SetMTime(old_file.st_mtime - 3600)
     self.os.chown(old_file_path, 200, 200)
@@ -966,7 +966,7 @@ class FakeOsModuleTest(TestCase):
     """Test renaming when old and new names are the same."""
     directory = 'xyzzy'
     file_contents = 'Spam eggs'
-    file_path = '%s/eggs' % directory
+    file_path = '{0!s}/eggs'.format(directory)
     self.filesystem.CreateFile(file_path, contents=file_contents)
     self.os.rename(file_path, file_path)
     self.assertEqual(file_contents,
@@ -993,7 +993,7 @@ class FakeOsModuleTest(TestCase):
   def testRmdirRaisesIfNotEmpty(self):
     """Raises an exception if the target directory is not empty."""
     directory = 'xyzzy'
-    file_path = '%s/plugh' % directory
+    file_path = '{0!s}/plugh'.format(directory)
     self.filesystem.CreateFile(file_path)
     self.assertTrue(self.filesystem.Exists(file_path))
     self.assertRaises(OSError, self.os.rmdir, directory)
@@ -1001,7 +1001,7 @@ class FakeOsModuleTest(TestCase):
   def testRmdirRaisesIfNotDirectory(self):
     """Raises an exception if the target is not a directory."""
     directory = 'xyzzy'
-    file_path = '%s/plugh' % directory
+    file_path = '{0!s}/plugh'.format(directory)
     self.filesystem.CreateFile(file_path)
     self.assertTrue(self.filesystem.Exists(file_path))
     self.assertRaises(OSError, self.os.rmdir, file_path)
@@ -1080,13 +1080,13 @@ class FakeOsModuleTest(TestCase):
     directory = 'xyzzy'
     self.assertFalse(self.filesystem.Exists(directory))
     self.os.mkdir(directory)
-    self.assertTrue(self.filesystem.Exists('/%s' % directory))
+    self.assertTrue(self.filesystem.Exists('/{0!s}'.format(directory)))
     self.os.chdir(directory)
     self.os.mkdir(directory)
-    self.assertTrue(self.filesystem.Exists('/%s/%s' % (directory, directory)))
+    self.assertTrue(self.filesystem.Exists('/{0!s}/{1!s}'.format(directory, directory)))
     self.os.chdir(directory)
     self.os.mkdir('../abccb')
-    self.assertTrue(self.filesystem.Exists('/%s/abccb' % directory))
+    self.assertTrue(self.filesystem.Exists('/{0!s}/abccb'.format(directory)))
 
   def testMkdirWithTrailingSlash(self):
     """mkdir can create a directory named with a trailing slash."""
@@ -1104,7 +1104,7 @@ class FakeOsModuleTest(TestCase):
   def testMkdirRaisesIfNoParent(self):
     """mkdir raises exception if parent directory does not exist."""
     parent = 'xyzzy'
-    directory = '%s/foo' % (parent,)
+    directory = '{0!s}/foo'.format(parent)
     self.assertFalse(self.filesystem.Exists(parent))
     self.assertRaises(Exception, self.os.mkdir, directory)
 
@@ -1118,7 +1118,7 @@ class FakeOsModuleTest(TestCase):
   def testMkdirRaisesIfFileExists(self):
     """mkdir raises exception if name already exists as a file."""
     directory = 'xyzzy'
-    file_path = '%s/plugh' % directory
+    file_path = '{0!s}/plugh'.format(directory)
     self.filesystem.CreateFile(file_path)
     self.assertTrue(self.filesystem.Exists(file_path))
     self.assertRaises(Exception, self.os.mkdir, file_path)
@@ -1160,7 +1160,7 @@ class FakeOsModuleTest(TestCase):
   def testMakedirs(self):
     """makedirs can create a directory even in parent does not exist."""
     parent = 'xyzzy'
-    directory = '%s/foo' % (parent,)
+    directory = '{0!s}/foo'.format(parent)
     self.assertFalse(self.filesystem.Exists(parent))
     self.os.makedirs(directory)
     self.assertTrue(self.filesystem.Exists(parent))
@@ -1168,7 +1168,7 @@ class FakeOsModuleTest(TestCase):
   def testMakedirsRaisesIfParentIsFile(self):
     """makedirs raises exception if a parent component exists as a file."""
     file_path = 'xyzzy'
-    directory = '%s/plugh' % file_path
+    directory = '{0!s}/plugh'.format(file_path)
     self.filesystem.CreateFile(file_path)
     self.assertTrue(self.filesystem.Exists(file_path))
     self.assertRaises(Exception, self.os.makedirs, directory)
@@ -1500,7 +1500,7 @@ class FakeOsModuleTest(TestCase):
 
   def testMkNodeRaisesIfParentDirDoesntExist(self):
     parent = 'xyzzy'
-    filename = '%s/foo' % (parent,)
+    filename = '{0!s}/foo'.format(parent)
     self.assertFalse(self.filesystem.Exists(parent))
     self.assertRaises(OSError, self.os.mknod, filename)
 
@@ -1584,11 +1584,11 @@ class FakeOsModuleTest(TestCase):
     root = '/foo'
     visit = 'visit'
     no_visit = 'no_visit'
-    self.filesystem.CreateFile('%s/bar' % (root,))
-    self.filesystem.CreateFile('%s/%s/1.txt' % (root, visit))
-    self.filesystem.CreateFile('%s/%s/2.txt' % (root, visit))
-    self.filesystem.CreateFile('%s/%s/3.txt' % (root, no_visit))
-    self.filesystem.CreateFile('%s/%s/4.txt' % (root, no_visit))
+    self.filesystem.CreateFile('{0!s}/bar'.format(root))
+    self.filesystem.CreateFile('{0!s}/{1!s}/1.txt'.format(root, visit))
+    self.filesystem.CreateFile('{0!s}/{1!s}/2.txt'.format(root, visit))
+    self.filesystem.CreateFile('{0!s}/{1!s}/3.txt'.format(root, no_visit))
+    self.filesystem.CreateFile('{0!s}/{1!s}/4.txt'.format(root, no_visit))
 
     generator = self.os.walk('/foo')
     root_contents = next(generator)
@@ -1597,8 +1597,8 @@ class FakeOsModuleTest(TestCase):
     visited_visit_directory = False
 
     for root, unused_dirs, unused_files in iter(generator):
-      self.assertEqual(False, root.endswith('/%s' % (no_visit)))
-      if root.endswith('/%s' % (visit)):
+      self.assertEqual(False, root.endswith('/{0!s}'.format((no_visit))))
+      if root.endswith('/{0!s}'.format((visit))):
         visited_visit_directory = True
 
     self.assertEqual(True, visited_visit_directory)
@@ -1786,11 +1786,11 @@ class OsPathInjectionRegressionTest(TestCase):
     self.filesystem.CreateDirectory(top_level_dir)
     self.assertTrue(self.filesystem.Exists('/'))
     self.assertTrue(self.filesystem.Exists(top_level_dir))
-    self.filesystem.CreateDirectory('%s/po' % top_level_dir)
-    self.filesystem.CreateFile('%s/po/control' % top_level_dir)
-    self.filesystem.CreateFile('%s/po/experiment' % top_level_dir)
-    self.filesystem.CreateDirectory('%s/gv' % top_level_dir)
-    self.filesystem.CreateFile('%s/gv/control' % top_level_dir)
+    self.filesystem.CreateDirectory('{0!s}/po'.format(top_level_dir))
+    self.filesystem.CreateFile('{0!s}/po/control'.format(top_level_dir))
+    self.filesystem.CreateFile('{0!s}/po/experiment'.format(top_level_dir))
+    self.filesystem.CreateDirectory('{0!s}/gv'.format(top_level_dir))
+    self.filesystem.CreateFile('{0!s}/gv/control'.format(top_level_dir))
 
     expected = [
         ('/', ['x'], []),
@@ -1815,11 +1815,11 @@ class FakePathModuleTest(TestCase):
   def testAbspath(self):
     """abspath should return a consistent representation of a file."""
     filename = 'foo'
-    abspath = '/%s' % filename
+    abspath = '/{0!s}'.format(filename)
     self.filesystem.CreateFile(abspath)
     self.assertEqual(abspath, self.path.abspath(abspath))
     self.assertEqual(abspath, self.path.abspath(filename))
-    self.assertEqual(abspath, self.path.abspath('../%s' % filename))
+    self.assertEqual(abspath, self.path.abspath('../{0!s}'.format(filename)))
 
   def testAbspathDealsWithRelativeNonRootPath(self):
     """abspath should correctly handle relative paths from a non-/ directory.
@@ -1829,7 +1829,7 @@ class FakePathModuleTest(TestCase):
     """
     filename = '/foo/bar/baz'
     file_components = filename.split(self.path.sep)
-    basedir = '/%s' % (file_components[0],)
+    basedir = '/{0!s}'.format(file_components[0])
     self.filesystem.CreateFile(filename)
     self.os.chdir(basedir)
     self.assertEqual(basedir, self.path.abspath(self.path.curdir))
@@ -1851,7 +1851,7 @@ class FakePathModuleTest(TestCase):
         self.assertEqual('path/to/foo', self.path.relpath(path_foo))
     self.assertEqual('../foo',
                      self.path.relpath(path_foo, path_bar))
-    self.assertEqual('../../..%s' % path_other,
+    self.assertEqual('../../..{0!s}'.format(path_other),
                      self.path.relpath(path_other, path_bar))
     self.assertEqual('.',
                      self.path.relpath(path_bar, path_bar))
@@ -1885,7 +1885,7 @@ class FakePathModuleTest(TestCase):
 
   def testDirname(self):
     dirname = 'foo/bar'
-    self.assertEqual(dirname, self.path.dirname('%s/baz' % dirname))
+    self.assertEqual(dirname, self.path.dirname('{0!s}/baz'.format(dirname)))
 
   def testJoin(self):
     components = ['foo', 'bar', 'baz']
@@ -1924,7 +1924,7 @@ class FakePathModuleTest(TestCase):
     self.filesystem.CreateDirectory(dir_path)
     size = self.path.getsize(dir_path)
     self.assertFalse(int(size) < 0,
-                     'expected non-negative size; actual: %s' % size)
+                     'expected non-negative size; actual: {0!s}'.format(size))
 
   def testGetsizeDirNonZeroSize(self):
     # For directories, only require that the size is non-negative.
@@ -1932,7 +1932,7 @@ class FakePathModuleTest(TestCase):
     self.filesystem.CreateFile(self.filesystem.JoinPaths(dir_path, 'baz'))
     size = self.path.getsize(dir_path)
     self.assertFalse(int(size) < 0,
-                     'expected non-negative size; actual: %s' % size)
+                     'expected non-negative size; actual: {0!s}'.format(size))
 
   def testIsdir(self):
     self.filesystem.CreateFile('foo/bar')

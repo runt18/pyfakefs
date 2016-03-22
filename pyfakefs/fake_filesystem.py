@@ -269,7 +269,7 @@ class FakeFile(object):
     if st_size < current_size:
       self.contents = self.contents[:st_size]
     else:
-      self.contents = '%s%s' % (self.contents, '\0' * (st_size - current_size))
+      self.contents = '{0!s}{1!s}'.format(self.contents, '\0' * (st_size - current_size))
     self.st_size = len(self.contents)
     self.epoch += 1
 
@@ -290,7 +290,7 @@ class FakeFile(object):
     self.st_mtime = st_mtime
 
   def __str__(self):
-    return '%s(%o)' % (self.name, self.st_mode)
+    return '{0!s}({1:o})'.format(self.name, self.st_mode)
 
   def SetIno(self, st_ino):
     """Set the self.st_ino attribute.
@@ -650,7 +650,7 @@ class FakeFilesystem(object):
     """
 
     def _ComponentsToPath(component_folders):
-      return '%s%s' % (self.path_separator,
+      return '{0!s}{1!s}'.format(self.path_separator,
                        self.path_separator.join(component_folders))
 
     def _ValidRelativePath(file_path):
@@ -703,7 +703,7 @@ class FakeFilesystem(object):
       # file.open('') raises IOError, so mimic that, and validate that all
       # parts of a relative path exist.
       raise IOError(errno.ENOENT,
-                    'No such file or directory: \'%s\'' % file_path)
+                    'No such file or directory: \'{0!s}\''.format(file_path))
     file_path = self.NormalizePath(file_path)
     if file_path == self.root.name:
       return file_path
@@ -734,8 +734,8 @@ class FakeFilesystem(object):
         link_depth += 1
         if link_depth > _MAX_LINK_DEPTH:
           raise IOError(errno.EMLINK,
-                        'Too many levels of symbolic links: \'%s\'' %
-                        _ComponentsToPath(resolved_components))
+                        'Too many levels of symbolic links: \'{0!s}\''.format(
+                        _ComponentsToPath(resolved_components)))
         link_path = _FollowLink(resolved_components, current_dir)
 
         # Following the link might result in the complete replacement of the
@@ -1547,7 +1547,7 @@ class FakeOsModule(object):
     """Removes the FakeFile object representing the specified file."""
     path = self.filesystem.NormalizePath(path)
     if self.path.isdir(path) and not self.path.islink(path):
-      raise OSError(errno.EISDIR, "Is a directory: '%s'" % path)
+      raise OSError(errno.EISDIR, "Is a directory: '{0!s}'".format(path))
     try:
       self.filesystem.RemoveObject(path)
     except IOError as e:
@@ -1835,18 +1835,18 @@ class FakeOsModule(object):
     head, tail = self.path.split(filename)
     if not tail:
       if self.filesystem.Exists(head):
-        raise OSError(errno.EEXIST, 'Fake filesystem: %s: %s' % (
+        raise OSError(errno.EEXIST, 'Fake filesystem: {0!s}: {1!s}'.format(
             os.strerror(errno.EEXIST), filename))
-      raise OSError(errno.ENOENT, 'Fake filesystem: %s: %s' % (
+      raise OSError(errno.ENOENT, 'Fake filesystem: {0!s}: {1!s}'.format(
           os.strerror(errno.ENOENT), filename))
     if tail == '.' or tail == '..' or self.filesystem.Exists(filename):
-      raise OSError(errno.EEXIST, 'Fake fileystem: %s: %s' % (
+      raise OSError(errno.EEXIST, 'Fake fileystem: {0!s}: {1!s}'.format(
           os.strerror(errno.EEXIST), filename))
     try:
       self.filesystem.AddObject(head, FakeFile(tail,
                                                mode & ~self.filesystem.umask))
     except IOError:
-      raise OSError(errno.ENOTDIR, 'Fake filesystem: %s: %s' % (
+      raise OSError(errno.ENOTDIR, 'Fake filesystem: {0!s}: {1!s}'.format(
           os.strerror(errno.ENOTDIR), filename))
 
   def symlink(self, link_target, path):
@@ -2162,7 +2162,7 @@ class FakeFileOpen(object):
     mode = mode.replace('rU', 'r').replace('U', 'r')
 
     if mode not in _OPEN_MODE_MAP:
-      raise IOError('Invalid mode: %r' % orig_modes)
+      raise IOError('Invalid mode: {0!r}'.format(orig_modes))
 
     must_exist, need_read, need_write, truncate, append = _OPEN_MODE_MAP[mode]
 

@@ -103,7 +103,7 @@ class TestPyfakefsUnittest(fake_filesystem_unittest.TestCase): # pylint: disable
     def test_tempdirectory(self):
         '''Fake TemporaryDirectory class is bound'''
         with tempfile.TemporaryDirectory() as td:
-            with open('%s/fake_file.txt' % td, 'w') as f:
+            with open('{0!s}/fake_file.txt'.format(td), 'w') as f:
                 self.assertTrue(self.fs.Exists(td))
 
 

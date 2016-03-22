@@ -96,7 +96,7 @@ class FakeFilesystemVsRealTest(TestCase):
         # Base paths in the real and test file systems.     We keep them different
         # so that missing features in the fake don't fall through to the base
         # operations and magically succeed.
-        tsname = 'fakefs.%s' % time.time()
+        tsname = 'fakefs.{0!s}'.format(time.time())
         # Fully expand the base_path - required on OS X.
         self.real_base = os.path.realpath(
                 os.path.join(tempfile.gettempdir(), tsname))
@@ -132,7 +132,7 @@ class FakeFilesystemVsRealTest(TestCase):
                         os.rmdir(real_path)
                     except OSError as e:
                         if 'Directory not empty' in e:
-                            self.fail('Real path %s not empty: %s : %s' % (
+                            self.fail('Real path {0!s} not empty: {1!s} : {2!s}'.format(
                                     real_path, e, os.listdir(real_path)))
                         else:
                             raise
@@ -180,8 +180,8 @@ class FakeFilesystemVsRealTest(TestCase):
         fake_value = None
         real_err = None
         fake_err = None
-        method_call = '%s' % method_name
-        method_call += '()' if path == () else '(%s)' % path
+        method_call = '{0!s}'.format(method_name)
+        method_call += '()' if path == () else '({0!s})'.format(path)
         # Catching Exception below gives a lint warning, but it's what we need.
         try:
             args = [] if path == () else [path]
@@ -203,17 +203,17 @@ class FakeFilesystemVsRealTest(TestCase):
         # is almost always different because of the file paths.
         if _ErrorClass(real_err) != _ErrorClass(fake_err):
             if real_err is None:
-                return '%s: real version returned %s, fake raised %s' % (
+                return '{0!s}: real version returned {1!s}, fake raised {2!s}'.format(
                         method_call, real_value, _ErrorClass(fake_err))
             if fake_err is None:
-                return '%s: real version raised %s, fake returned %s' % (
+                return '{0!s}: real version raised {1!s}, fake returned {2!s}'.format(
                         method_call, _ErrorClass(real_err), fake_value)
-            return '%s: real version raised %s, fake raised %s' % (
+            return '{0!s}: real version raised {1!s}, fake raised {2!s}'.format(
                     method_call, _ErrorClass(real_err), _ErrorClass(fake_err))
         real_errno = self._GetErrno(real_err)
         fake_errno = self._GetErrno(fake_err)
         if real_errno != fake_errno:
-            return '%s(%s): both raised %s, real errno %s, fake errno %s' % (
+            return '{0!s}({1!s}): both raised {2!s}, real errno {3!s}, fake errno {4!s}'.format(
                     method_name, path, _ErrorClass(real_err), real_errno, fake_errno)
         # If the method is supposed to return a full path AND both values
         # begin with the expected full path, then trim it off.
@@ -224,7 +224,7 @@ class FakeFilesystemVsRealTest(TestCase):
                 real_value = real_value[len(self.real_base):]
                 fake_value = fake_value[len(self.fake_base):]
         if real_value != fake_value:
-            return '%s: real return %s, fake returned %s' % (
+            return '{0!s}: real return {1!s}, fake returned {2!s}'.format(
                     method_call, real_value, fake_value)
         return None
 
@@ -351,8 +351,7 @@ class FakeFilesystemVsRealTest(TestCase):
             if diff:
                 differences.append(diff)
         if differences:
-            self.fail('Behaviors do not match for %s:\n    %s' %
-                                (path, '\n    '.join(differences)))
+            self.fail('Behaviors do not match for {0!s}:\n    {1!s}'.format(path, '\n    '.join(differences)))
 
     def assertFileHandleBehaviorsMatch(self, path, mode, data):
         path = Sep(path)
@@ -369,8 +368,7 @@ class FakeFilesystemVsRealTest(TestCase):
             if diff:
                 differences.append(diff)
         if differences:
-            self.fail('Behaviors do not match for %s:\n    %s' %
-                                (path, '\n    '.join(differences)))
+            self.fail('Behaviors do not match for {0!s}:\n    {1!s}'.format(path, '\n    '.join(differences)))
 
     # Helpers for checks which are not straight method calls.
 

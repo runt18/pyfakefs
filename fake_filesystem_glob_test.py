@@ -34,9 +34,9 @@ class FakeGlobUnitTest(unittest.TestCase):
     self.glob = fake_filesystem_glob.FakeGlobModule(self.filesystem)
     directory = './xyzzy'
     self.filesystem.CreateDirectory(directory)
-    self.filesystem.CreateDirectory('%s/subdir' % directory)
-    self.filesystem.CreateDirectory('%s/subdir2' % directory)
-    self.filesystem.CreateFile('%s/subfile' % directory)
+    self.filesystem.CreateDirectory('{0!s}/subdir'.format(directory))
+    self.filesystem.CreateDirectory('{0!s}/subdir2'.format(directory))
+    self.filesystem.CreateFile('{0!s}/subfile'.format(directory))
     self.filesystem.CreateFile('[Temp]')
 
   def testGlobEmpty(self):

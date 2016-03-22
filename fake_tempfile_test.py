@@ -48,7 +48,7 @@ class FakeLogging(object):
     self._message = message
 
   def FailOnMessage(self, message):
-    self._test_case.fail('Unexpected message received: %s' % message)
+    self._test_case.fail('Unexpected message received: {0!s}'.format(message))
 
   warn = FailOnMessage
   info = FailOnMessage

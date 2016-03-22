@@ -37,8 +37,8 @@ class FakeShutilModuleTest(unittest.TestCase):
   def testRmtree(self):
     directory = 'xyzzy'
     self.filesystem.CreateDirectory(directory)
-    self.filesystem.CreateDirectory('%s/subdir' % directory)
-    self.filesystem.CreateFile('%s/subfile' % directory)
+    self.filesystem.CreateDirectory('{0!s}/subdir'.format(directory))
+    self.filesystem.CreateFile('{0!s}/subfile'.format(directory))
     self.assertTrue(self.filesystem.Exists(directory))
     self.shutil.rmtree(directory)
     self.assertFalse(self.filesystem.Exists(directory))
@@ -58,7 +58,7 @@ class FakeShutilModuleTest(unittest.TestCase):
   def testCopyDirectory(self):
     src_file = 'xyzzy'
     parent_directory = 'parent'
-    dst_file = '%s/%s' % (parent_directory, src_file)
+    dst_file = '{0!s}/{1!s}'.format(parent_directory, src_file)
     src_obj = self.filesystem.CreateFile(src_file)
     self.filesystem.CreateDirectory(parent_directory)
     src_obj.st_mode = ((src_obj.st_mode & ~0o7777) | 0o750)
@@ -112,7 +112,7 @@ class FakeShutilModuleTest(unittest.TestCase):
   def testCopy2Directory(self):
     src_file = 'xyzzy'
     parent_directory = 'parent'
-    dst_file = '%s/%s' % (parent_directory, src_file)
+    dst_file = '{0!s}/{1!s}'.format(parent_directory, src_file)
     src_obj = self.filesystem.CreateFile(src_file)
     self.filesystem.CreateDirectory(parent_directory)
     src_obj.st_mode = ((src_obj.st_mode & ~0o7777) | 0o750)
@@ -136,14 +136,14 @@ class FakeShutilModuleTest(unittest.TestCase):
     src_directory = 'xyzzy'
     dst_directory = 'xyzzy_copy'
     self.filesystem.CreateDirectory(src_directory)
-    self.filesystem.CreateDirectory('%s/subdir' % src_directory)
-    self.filesystem.CreateFile('%s/subfile' % src_directory)
+    self.filesystem.CreateDirectory('{0!s}/subdir'.format(src_directory))
+    self.filesystem.CreateFile('{0!s}/subfile'.format(src_directory))
     self.assertTrue(self.filesystem.Exists(src_directory))
     self.assertFalse(self.filesystem.Exists(dst_directory))
     self.shutil.copytree(src_directory, dst_directory)
     self.assertTrue(self.filesystem.Exists(dst_directory))
-    self.assertTrue(self.filesystem.Exists('%s/subdir' % dst_directory))
-    self.assertTrue(self.filesystem.Exists('%s/subfile' % dst_directory))
+    self.assertTrue(self.filesystem.Exists('{0!s}/subdir'.format(dst_directory)))
+    self.assertTrue(self.filesystem.Exists('{0!s}/subfile'.format(dst_directory)))
 
   def testCopytreeSrcIsFile(self):
     src_file = 'xyzzy'
@@ -169,7 +169,7 @@ class FakeShutilModuleTest(unittest.TestCase):
   def testMoveFileIntoDirectory(self):
     src_file = 'xyzzy'
     dst_directory = 'directory'
-    dst_file = '%s/%s' % (dst_directory, src_file)
+    dst_file = '{0!s}/{1!s}'.format(dst_directory, src_file)
     self.filesystem.CreateFile(src_file)
     self.filesystem.CreateDirectory(dst_directory)
     self.assertTrue(self.filesystem.Exists(src_file))
@@ -182,14 +182,14 @@ class FakeShutilModuleTest(unittest.TestCase):
     src_directory = 'original_xyzzy'
     dst_directory = 'moved_xyzzy'
     self.filesystem.CreateDirectory(src_directory)
-    self.filesystem.CreateFile('%s/subfile' % src_directory)
-    self.filesystem.CreateDirectory('%s/subdir' % src_directory)
+    self.filesystem.CreateFile('{0!s}/subfile'.format(src_directory))
+    self.filesystem.CreateDirectory('{0!s}/subdir'.format(src_directory))
     self.assertTrue(self.filesystem.Exists(src_directory))
     self.assertFalse(self.filesystem.Exists(dst_directory))
     self.shutil.move(src_directory, dst_directory)
     self.assertTrue(self.filesystem.Exists(dst_directory))
-    self.assertTrue(self.filesystem.Exists('%s/subfile' % dst_directory))
-    self.assertTrue(self.filesystem.Exists('%s/subdir' % dst_directory))
+    self.assertTrue(self.filesystem.Exists('{0!s}/subfile'.format(dst_directory)))
+    self.assertTrue(self.filesystem.Exists('{0!s}/subdir'.format(dst_directory)))
     self.assertFalse(self.filesystem.Exists(src_directory))
 
 
@@ -259,7 +259,7 @@ class CopyFileTest(unittest.TestCase):
   def testRaisesIfDestDirIsNotWritable(self):
     src_file = 'xyzzy'
     dst_dir = '/tmp/foo'
-    dst_file = '%s/%s' % (dst_dir, src_file)
+    dst_file = '{0!s}/{1!s}'.format(dst_dir, src_file)
     src_contents = 'contents of source file'
     self.filesystem.CreateFile(src_file, contents=src_contents)
     self.filesystem.CreateDirectory(dst_dir, perm_bits=0o555)
