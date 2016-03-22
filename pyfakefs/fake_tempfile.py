@@ -76,7 +76,7 @@ class FakeTempfileModule(object):
       prefix = self._temp_prefix
     while not filename or self._filesystem.Exists(filename):
       # pylint: disable-msg=W0212
-      filename = self._filesystem.JoinPaths(dir, '%s%s%s' % (
+      filename = self._filesystem.JoinPaths(dir, '{0!s}{1!s}{2!s}'.format(
           prefix,
           next(self._tempfile._RandomNameSequence()),
           suffix))
